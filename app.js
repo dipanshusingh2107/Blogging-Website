@@ -11,9 +11,11 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
+const User = require("./models/User");
+const Post = require("./models/Post");
 
 
-const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing. Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
+const homeStartingContent ="IT IS DBMS PROJECT";
 const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
 const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
@@ -41,20 +43,6 @@ mongoose.connect("mongodb://localhost:27017/sample2DB",
 {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex", true);
 
-const userSchema = new mongoose.Schema ({
-  name: String,
-  email: String,
-  username: String,
-  password: String,
-  googleId: String,
-  userposts: [],
-  usercomments: []
-});
-
-userSchema.plugin(passportLocalMongoose, {usernameField: 'email'});
-userSchema.plugin(findOrCreate);
-
-const User = new mongoose.model("User", userSchema);
 
 passport.use(User.createStrategy());
 
@@ -83,24 +71,17 @@ function(accessToken, refreshToken, profile, cb) {
 
 
 app.get("/", function(req, res) {
-  res.render("home", {startingContent: homeStartingContent, posts: posts, 
-    aboutContent: aboutContent, contactContent: contactContent});
+  Post.find({}).then((posts)=>{
+    res.render("home", {startingContent: homeStartingContent, posts: posts, 
+      aboutContent: aboutContent, contactContent: contactContent});
+  });
 });
 
 app.get("/homeloggedin", function(req, res) {
-
-  // User.find({"userposts": {$ne: null}}, function(err, foundUsers) {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     if(foundUsers) {
-  //       res.render("homeloggedin", {usersWithPosts: foundUsers});
-  //     }
-  //   }
-  // });
-
-  res.render("homeloggedin", {startingContent: homeStartingContent, posts: posts, 
-    aboutContent: aboutContent, contactContent: contactContent});
+  Post.find({}).then((posts)=>{
+    res.render("homeloggedin", {startingContent: homeStartingContent, posts: posts, 
+      aboutContent: aboutContent, contactContent: contactContent});
+  });
 });
 
 app.get("/auth/google",
@@ -132,70 +113,57 @@ app.get("/register", function(req, res) {
 
 app.get("/posts/:anything", function(req, res) {
   const requestedTitle = _.lowerCase(req.params.anything);
-
-  posts.forEach(function(post) {
-    const storedTitle = _.lowerCase(post.title);
-
-    if(storedTitle === requestedTitle) {
-      if (req.isAuthenticated()) {
+  Post.find({title:requestedTitle}).then((post)=>{
+      if (req.isAuthenticated()) 
+      {
+        console.log(post)
         res.render("loggedinpost", 
-        {title: post.title, image: post.image, content: post.body, 
-        comments: post.comment});
-      } else {
+        {title: post[0].title, image: post[0].image, content: post[0].body, 
+        comments: post[0].comments});  // change to post.comments
+      } 
+      else 
+      {
         res.render("post", 
-        {title: post.title, image: post.image, content: post.body, 
-        comments: post.comment});
+        {title: post[0].title, image: post[0].image, content: post[0].body, 
+        comments: post[0].comments});//change to post.comments
       }
     }
+  );
   });
-});
 
 app.get("/logout", function(req, res) {
   req.logout();
   res.redirect("/");
 });
 
+// **** CREATING POST *****
 app.post("/compose", function(req, res) {
-  const post = {
+  const newPost = new Post({
     title : req.body.postTitle,
     image : req.body.postImage,
     body : req.body.postBody,
-    comment : []
-  };
-
-  posts.push(post);
-
-  // User.findById(req.user.id, function(err, foundUser) {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     if (foundUser) {
-  //       foundUser.userposts = post;
-  //       foundUser.save(function() {
-  //         res.redirect("/homeloggedin");
-  //       });
-  //     }
-  //   }
-  // });
-
-  res.redirect("/homeloggedin");
+    comments:[]
+  });
+  newPost.save((err,data)=>{
+    if(err)
+    {
+      console.log(err);
+      res.send('Post not saved');
+      return err;
+    }
+    else
+    {
+      res.redirect("/homeloggedin");
+    }
+  })
+  
 });
 
+// ******* Posting Comments ************
 app.post("/posts/:anything", function(req, res) {
   const singlecomment = {
     postedcomment : req.body.postComment
   };
-
-  // User.findById(req.user.id, function(err, foundUser) {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     if (foundUser) {
-  //       foundUser.usercomments = singlecomment;
-  //       foundUser.save();
-  //     }
-  //   }
-  // });
 
   let requestedTitle = _.lowerCase(req.params.anything);
 
@@ -205,7 +173,7 @@ app.post("/posts/:anything", function(req, res) {
     if(storedTitle === requestedTitle) {
       if (req.isAuthenticated()) {
         post.comment.push(singlecomment);
-        res.redirect("/homeloggedin");
+        res.redirect("/homeloggedin");   //change this
       } else {
         res.redirect("/login");
       }
