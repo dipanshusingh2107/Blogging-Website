@@ -112,6 +112,11 @@ app.get("/register", function(req, res) {
 });
 
 app.get("/posts/:anything", function(req, res) {
+
+  const requestedTitle = req.params.anything;
+  Post.find({title:requestedTitle}).then((post)=>{
+      if (req.isAuthenticated()) 
+      {
   const requestedTitle = _.lowerCase(req.params.anything);
   Post.find({title:requestedTitle}).then((post)=>{
       if (req.isAuthenticated()) 
@@ -165,6 +170,30 @@ app.post("/posts/:anything", function(req, res) {
     postedcomment : req.body.postComment
   };
 
+
+  let requestedTitle = req.params.anything;
+  oldcomments = [];
+  Post.find({title:requestedTitle}).then((post)=>{
+    oldcomments = [...post[0].comments];
+    //console.log(post[0].comments);
+    newcomments=[]
+  for(let i=0;i<oldcomments.length;i++)
+  {
+    let x = {postedcomment:oldcomments[i].postedcomment};
+    newcomments.push(x);
+  }
+  newcomments.push(singlecomment);
+  if (req.isAuthenticated()) 
+  {
+    Post.findOneAndUpdate({title:requestedTitle} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
+    res.redirect("/homeloggedin");   //change this
+  } 
+  else 
+  {
+    res.redirect("/login");
+  }
+});
+
   let requestedTitle = _.lowerCase(req.params.anything);
 
   posts.forEach(function(post) {
@@ -188,7 +217,7 @@ app.post("/register", function(req,res) {
       if(err) {
           console.log(err);
           res.redirect("/register");
-      } else {
+      } else 
           passport.authenticate("local")(req, res, function() {
               res.redirect("/homeloggedin");
           });
