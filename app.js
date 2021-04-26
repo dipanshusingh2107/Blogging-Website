@@ -11,13 +11,12 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
+const ObjectId = require('mongodb').ObjectID;
 const User = require("./models/User");
 const Post = require("./models/Post");
 
 
-const homeStartingContent ="IT IS DBMS PROJECT";
-const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
-const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
+const homeStartingContent ="This platform is for all the bloggers out there to post day to day news related stuff, articles etc.";
 
 const app = express();
 
@@ -26,8 +25,6 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());
 app.use(express.static("public"));
-
-let posts = [];
 
 app.use(session ({
   secret: "Our little secret.",
@@ -72,15 +69,13 @@ function(accessToken, refreshToken, profile, cb) {
 
 app.get("/", function(req, res) {
   Post.find({}).then((posts)=>{
-    res.render("home", {startingContent: homeStartingContent, posts: posts, 
-      aboutContent: aboutContent, contactContent: contactContent});
+    res.render("home", {startingContent: homeStartingContent, posts: posts});
   });
 });
 
 app.get("/homeloggedin", function(req, res) {
   Post.find({}).then((posts)=>{
-    res.render("homeloggedin", {startingContent: homeStartingContent, posts: posts, 
-      aboutContent: aboutContent, contactContent: contactContent});
+    res.render("homeloggedin", {startingContent: homeStartingContent, posts: posts});
   });
 });
 
@@ -112,29 +107,30 @@ app.get("/register", function(req, res) {
 });
 
 app.get("/posts/:anything", function(req, res) {
+  const requestedID = req.params.anything;
 
-  const requestedTitle = req.params.anything;
-  Post.find({title:requestedTitle}).then((post)=>{
-      if (req.isAuthenticated()) 
-      {
-  const requestedTitle = _.lowerCase(req.params.anything);
-  Post.find({title:requestedTitle}).then((post)=>{
-      if (req.isAuthenticated()) 
-      {
-        console.log(post)
-        res.render("loggedinpost", 
-        {title: post[0].title, image: post[0].image, content: post[0].body, 
-        comments: post[0].comments});  // change to post.comments
-      } 
-      else 
-      {
+  Post.findOne({_id: new ObjectId(requestedID)}).then((post)=>{
+    if (req.isAuthenticated())  {
+      res.render("loggedinpost", 
+      {title: post.title, image: post.image, content: post.body, 
+      comments: post.comments, id: requestedID});  
+    } else  {
         res.render("post", 
-        {title: post[0].title, image: post[0].image, content: post[0].body, 
-        comments: post[0].comments});//change to post.comments
+        {title: post.title, image: post.image, content: post.body, 
+        comments: post.comments, id: requestedID});
       }
-    }
-  );
   });
+});
+
+app.get("/myposts", function(req, res) {
+  if (req.isAuthenticated()) {
+    Post.find({}).then((posts)=>{
+      res.render("myposts", {posts: posts});
+    });
+  } else {
+      res.redirect("/login");
+  }
+});
 
 app.get("/logout", function(req, res) {
   req.logout();
@@ -160,8 +156,7 @@ app.post("/compose", function(req, res) {
     {
       res.redirect("/homeloggedin");
     }
-  })
-  
+  });
 });
 
 // ******* Posting Comments ************
@@ -170,44 +165,34 @@ app.post("/posts/:anything", function(req, res) {
     postedcomment : req.body.postComment
   };
 
+  const requestedID = req.params.anything;
+  let oldcomments = [];
 
-  let requestedTitle = req.params.anything;
-  oldcomments = [];
-  Post.find({title:requestedTitle}).then((post)=>{
-    oldcomments = [...post[0].comments];
-    //console.log(post[0].comments);
-    newcomments=[]
-  for(let i=0;i<oldcomments.length;i++)
-  {
-    let x = {postedcomment:oldcomments[i].postedcomment};
-    newcomments.push(x);
-  }
-  newcomments.push(singlecomment);
-  if (req.isAuthenticated()) 
-  {
-    Post.findOneAndUpdate({title:requestedTitle} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
-    res.redirect("/homeloggedin");   //change this
-  } 
-  else 
-  {
-    res.redirect("/login");
-  }
-});
-
-  let requestedTitle = _.lowerCase(req.params.anything);
-
-  posts.forEach(function(post) {
-    const storedTitle = _.lowerCase(post.title);
-
-    if(storedTitle === requestedTitle) {
-      if (req.isAuthenticated()) {
-        post.comment.push(singlecomment);
-        res.redirect("/homeloggedin");   //change this
-      } else {
+  Post.findOne({_id: new ObjectId(requestedID)}).then((post)=>{
+    oldcomments = [...post.comments];
+    let newcomments=[];
+  
+    for(let i=0;i<oldcomments.length;i++) {
+      let x = {postedcomment:oldcomments[i].postedcomment};
+      newcomments.push(x);
+    }
+  
+    if (req.isAuthenticated())  {
+      newcomments.push(singlecomment);
+      Post.findOneAndUpdate({title:requestedTitle} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
+      res.redirect("/homeloggedin");   //change this
+    }  else  {
         res.redirect("/login");
       }
-    } 
   });
+});
+
+app.post("/myposts", function(req, res) {
+  if (req.isAuthenticated()) {
+    res.redirect("/homeloggedin");
+  } else {
+      res.redirect("/login");
+  }
 });
 
 app.post("/register", function(req,res) {
@@ -217,7 +202,7 @@ app.post("/register", function(req,res) {
       if(err) {
           console.log(err);
           res.redirect("/register");
-      } else 
+      } else {
           passport.authenticate("local")(req, res, function() {
               res.redirect("/homeloggedin");
           });

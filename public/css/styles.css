@@ -7,40 +7,6 @@ body {
     box-sizing: border-box;
   }
   
-  form.example input[type=text] {
-    padding: 10px;
-    font-size: 17px;
-    border: 1px solid grey;
-    float: left;
-    width: 80%;
-    background: #f1f1f1;
-  }
-  
-  form.example button {
-    float: left;
-    width: 20%;
-    padding: 10px;
-    background: #2196F3;
-    color: white;
-    font-size: 17px;
-    border: 1px solid grey;
-    border-left: none;
-    cursor: pointer;
-  }
-  
-  form.example button:hover {
-    background: #0b7dda;
-  }
-  
-  form.example::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-
-  li a {
-      size: 2em;
-  }
 
 .container {
     padding-top: 20px;
@@ -67,10 +33,6 @@ body {
     color: #DED1C2;
     font-weight: bold;
     font-size: 200%;
-}
-
-.navbar-nav  li a:hover {
-    color: #1abc9c !important;
 }
 
 .login-btn {
@@ -197,8 +159,7 @@ span a:hover {
 
 .image-post {
     width:400px;
-    height: 400px;
-    
+    height: 400px;    
 }
 
 .centered-title {
@@ -219,3 +180,40 @@ span a:hover {
 .space {
     padding-left: 10px;
 }
+
+.myblogs-btn {
+    position: absolute;
+    right: 360px;
+    background-color: #A9CCE3;
+    margin-top: 20px;
+    width: 107px;
+    border-radius: 10px;
+}
+
+.dlt-btn {
+    position: absolute;
+    right: 50px;
+    bottom: 20px;
+}
+
+  .fa-facebook {
+    font-size: 25px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    text-decoration: none;
+    background: #4e6392;
+    color: white;
+    border-radius: 50%;
+  }
+
+  .fa-linkedin {
+    font-size: 25px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    text-decoration: none;
+    background: #8196c4;
+    color: white;
+    border-radius: 50%;
+  }
