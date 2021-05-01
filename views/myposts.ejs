@@ -1,7 +1,7 @@
 <%- include("partials/header"); -%>
 
 <span class="home-btn">
-  <a href="/homeloggedin">
+  <a href="/homeloggedin/<%=userid%>">
     <span class="glyphicon glyphicon-home"></span>Home
   </a>
 </span>
@@ -22,9 +22,9 @@
             <h2> <%= post.title %></h2>
             <p> 
                 <%= (post.body).substring(0,100) + "..." %>
-                <a href="/posts/<%=post.id%>">Read More</a> 
+                <a href="/posts/<%=post.id%>/<%=userid%>">Read More</a> 
             </p>
-            <form action="/deletepost/<%=post.id%>" method="POST">
+            <form action="/deletepost/<%=post.id%>/<%=userid%>" method="POST">
                 <button type="submit" class="btn btn-danger dlt-btn">Delete Post</button>
             </form>
           </div>

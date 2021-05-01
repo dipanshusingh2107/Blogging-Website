@@ -217,3 +217,14 @@ span a:hover {
     color: white;
     border-radius: 50%;
   }
+
+  .fa-instagram {
+    font-size: 25px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    text-decoration: none;
+    background: #ca4885;
+    color: white;
+    border-radius: 50%;
+  }

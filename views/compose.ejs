@@ -1,7 +1,7 @@
 <%- include("partials/header"); -%>
 
 <span class="home-btn">
-  <a href="/homeloggedin">
+  <a href="/homeloggedin/<%=userid%>">
     <span class="glyphicon glyphicon-home"></span>Home
   </a>
 </span>
@@ -15,12 +15,10 @@
   <form action="/compose" id="post_blog" method="POST">
     <div class="form-group">
       <label>Title</label>
-      <!-- <textarea name="postTitle" cols="30" rows="1" class="form-control"></textarea> -->
       <input type="text" class="form-control" name="postTitle" required>
     </div>
     <div class="form-group">
       <label>Image</label>
-      <!-- <input type="file" accept=".png, .jpg, .jpeg" class="form-control" name="postImage"> -->
       <input type="url" class="form-control" name="postImage"
        pattern="https://.*" placeholder="https://...">
     </div>
@@ -31,10 +29,12 @@
     <button type="submit" class="btn btn-primary" name="button">Publish</button>
   </form>
 </div>
+
 <script>
   let userId=window.location.href.split('/')[4];
   
   
   document.getElementById("post_blog").action="/compose/"+userId;
 </script>
+
 <%- include("partials/footer"); -%>
