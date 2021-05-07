@@ -29,25 +29,12 @@
             <h2> <%= post.title %></h2>
             <p> 
             <%= (post.body).substring(0,100) + "..." %>
-            <a href="/posts/<%=post.id%>/<%=userid%>">Read More</a> 
+            <a href="/posts/<%=post.id%>">Read More</a> 
             </p>
           </div>
         </div>
     <% }) %>
 
   </div>
-
-  <script>
-    let userId=window.location.href.split('/')[4];
-    console.log(userId)
-    document.querySelector(".postblog-btn").addEventListener('click',(e)=>{
-      e.preventDefault();
-      window.location.href="/compose/"+userId;
-    })
-    document.querySelector(".myblogs-btn").addEventListener('click',(e)=>{
-      e.preventDefault();
-      window.location.href="/myposts/"+userId;
-    })
-  </script>
 
 <%- include("partials/footer"); -%>

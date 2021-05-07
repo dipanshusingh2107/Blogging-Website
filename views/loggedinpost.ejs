@@ -1,7 +1,7 @@
 <%- include("partials/header"); -%>
 
 <span class="home-btn">
-  <a href="/homeloggedin/<%=userid%>">
+  <a href="/homeloggedin">
     <span class="glyphicon glyphicon-home"></span>Home
   </a>
 </span>
@@ -31,7 +31,7 @@
 <% }) %>
 
 <div class="container above-margin">
-  <form action="/posts/<%=id%>/<%=userid%>" method="POST">
+  <form action="/posts/<%=id%>" method="POST">
     <div class="form-group">
       <label>Post Comment</label>
       <input type="text" class="form-control" name="postComment" required>

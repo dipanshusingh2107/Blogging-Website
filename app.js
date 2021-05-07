@@ -74,13 +74,12 @@ app.get("/", function(req, res) {
 });
 
 // **** Display loggedin home page *****
-app.get("/homeloggedin/:anything", function(req, res) {
-  const requestedUserID = req.params.anything;
+app.get("/homeloggedin", function(req, res) {
 
   if(req.isAuthenticated()) {
     Post.find({}).then((posts)=>{
       res.render("homeloggedin", 
-      {startingContent: homeStartingContent, posts: posts, userid: requestedUserID});
+      {startingContent: homeStartingContent, posts: posts});
     });
   }
   else 
@@ -96,14 +95,13 @@ app.get("/auth/google",
 app.get("/auth/google/blog", 
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect("/homeloggedin/"+req.user._id);
+    res.redirect("/homeloggedin");
   });
 
 // **** Display compose page *****
-app.get("/compose/:anything", function(req, res) {
-  const requestedUserID = req.params.anything;
+app.get("/compose", function(req, res) {
   if (req.isAuthenticated()) {
-      res.render("compose",{userid: requestedUserID});
+      res.render("compose");
   } else {
       res.redirect("/login");
   }
@@ -117,24 +115,6 @@ app.get("/login", function(req, res) {
 // **** Display register page *****
 app.get("/register", function(req, res) {
   res.render("register");
-});
-
-// **** Display a post when user loggedin *****
-app.get("/posts/:anything/:anything2", function(req, res) {
-  const requestedPostID = req.params.anything;
-  const requestedUserID = req.params.anything2;
-
-  Post.findOne({_id: new ObjectId(requestedPostID)}).then((post)=>{
-    if (req.isAuthenticated())  {
-      res.render("loggedinpost", 
-      {title: post.title, image: post.image, content: post.body, 
-      comments: post.comments, id: requestedPostID, userid: requestedUserID});  
-    } else  {
-        res.render("post", 
-        {title: post.title, image: post.image, content: post.body, 
-        comments: post.comments, id: requestedPostID});
-      }
-  });
 });
 
 // **** Display a post *****
@@ -155,11 +135,12 @@ app.get("/posts/:anything", function(req, res) {
 });
 
 // **** Display particular user posts *****
-app.get("/myposts/:anything", function(req, res) {
-  const requestedUserID = req.params.anything;
+app.get("/myposts", function(req, res) {
+  
   if (req.isAuthenticated()) {
+    const requestedUserID = req.user._id.valueOf();
     Post.find({user: requestedUserID}).then((posts)=>{
-      res.render("myposts", {posts: posts, userid: requestedUserID});
+      res.render("myposts", {posts: posts});
     });
   } else {
       res.redirect("/login");
@@ -173,7 +154,7 @@ app.get("/logout", function(req, res) {
 });
 
 // **** CREATING a POST *****
-app.post("/compose/:anything", function(req, res) {
+app.post("/compose", function(req, res) {
   const newPost = new Post({
     title : req.body.postTitle,
     image : req.body.postImage,
@@ -190,19 +171,18 @@ app.post("/compose/:anything", function(req, res) {
     }
     else
     {
-      res.redirect("/myposts/"+req.params.anything);
+      res.redirect("/myposts");
     }
   });
 });
 
 // ******* Posting Comments ************
-app.post("/posts/:anything/:anything2", function(req, res) {
+app.post("/posts/:anything", function(req, res) {
   const singlecomment = {
     postedcomment : req.body.postComment
   };
 
   const requestedID = req.params.anything;
-  const requestedUserID = req.params.anything2;
 
   let oldcomments = [];
 
@@ -218,29 +198,24 @@ app.post("/posts/:anything/:anything2", function(req, res) {
     if (req.isAuthenticated())  {
       newcomments.push(singlecomment);
       Post.findOneAndUpdate({_id:requestedID} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
-      res.redirect("/posts/"+requestedID+"/"+requestedUserID); 
+      res.redirect("/posts/"+requestedID); 
     }  else  {
         res.redirect("/login");
       }
   });
 });
 
-// **** Posting Comments without login *****
-app.post("/posts/:anything", function(req, res) {
-    res.redirect("/login");
-});
 
 // **** Deleting POST *****
-app.post("/deletepost/:anything/:anything2",(req,res)=>{
+app.post("/deletepost/:anything",(req,res)=>{
   const requestedPostID = req.params.anything;
-  const requestedUserID = req.params.anything2;
 
   if(req.isAuthenticated()) {
     Post.deleteOne({_id:requestedPostID},(err)=>{
       if(err) {
         console.log(err);
       } else {
-        res.redirect("/myposts/"+requestedUserID);
+        res.redirect("/myposts");
       }
     });
   }
@@ -257,7 +232,7 @@ app.post("/register", function(req,res) {
           res.redirect("/register");
       } else {
           passport.authenticate("local")(req, res, function() {
-              res.redirect("/homeloggedin/"+ req.user._id);
+              res.redirect("/homeloggedin");
           });
       }
   });
@@ -267,7 +242,7 @@ app.post("/register", function(req,res) {
 app.post('/login',
   passport.authenticate('local',{failureRedirect: '/login'}),
   (req, res)=>{ 
-  res.redirect('/homeloggedin/' + req.user._id); 
+  res.redirect('/homeloggedin'); 
   });
 
 
