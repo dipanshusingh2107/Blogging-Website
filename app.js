@@ -14,6 +14,7 @@ const findOrCreate = require('mongoose-findorcreate');
 const ObjectId = require('mongodb').ObjectID;
 const User = require("./models/User");
 const Post = require("./models/Post");
+const { toArray } = require('lodash');
 
 
 const homeStartingContent ="This platform is for all the bloggers out there to post day to day news related stuff, articles etc.";
@@ -60,7 +61,7 @@ passport.use(new GoogleStrategy({
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
 function(accessToken, refreshToken, profile, cb) {
-  User.findOrCreate({ googleId: profile.id }, function (err, user) {
+  User.findOrCreate({ googleId: profile.id}, function (err, user) {
     return cb(err, user);
   });
 }
@@ -68,18 +69,40 @@ function(accessToken, refreshToken, profile, cb) {
 
 // **** Display home page *****
 app.get("/", function(req, res) {
-  Post.find({}).then((posts)=>{
-    res.render("home", {startingContent: homeStartingContent, posts: posts});
-  });
+  const postlimit = 1;
+  Post.find({}).sort({"_id": -1}).limit(postlimit).then((posts)=>{
+    res.render("home", 
+    {startingContent: homeStartingContent, posts: posts});
+ });
+});
+
+app.get("/get-posts/:start/:limit", function(req, res) {
+  var postskipped = parseInt(req.params.start);
+  var postlimit = parseInt(req.params.limit);
+  Post.find({}).sort({"_id": -1}).skip(postskipped).limit(postlimit).then((posts)=>{
+    res.send(posts);
+ });
 });
 
 // **** Display loggedin home page *****
 app.get("/homeloggedin", function(req, res) {
-
+  const postlimit = 1;
   if(req.isAuthenticated()) {
-    Post.find({}).then((posts)=>{
+    Post.find({}).sort({"_id": -1}).limit(postlimit).then((posts)=>{
       res.render("homeloggedin", 
       {startingContent: homeStartingContent, posts: posts});
+    });
+  }
+  else 
+  res.redirect("/login");
+});
+
+app.get("/get-postsloggedin/:start/:limit", function(req, res) {
+  var postskipped = parseInt(req.params.start);
+  var postlimit = parseInt(req.params.limit);
+  if(req.isAuthenticated()) {
+    Post.find({}).sort({"_id": -1}).skip(postskipped).limit(postlimit).then((posts)=>{
+      res.send(posts);
     });
   }
   else 
@@ -160,7 +183,7 @@ app.post("/compose", function(req, res) {
     image : req.body.postImage,
     body : req.body.postBody,
     comments:[],
-    user: req.params.anything
+    user: req.user._id
   });
   newPost.save((err,data)=>{
     if(err)

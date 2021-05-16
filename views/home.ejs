@@ -5,94 +5,110 @@
       <a class="btn btn-lg" href="/login" role="button">Login</a>
     </span>
   </div>
-
   
-  <div class="main container">
-    <h1>Home</h1>
-    <p> <%= startingContent %> </p>
-    <br>
-  
-    <h1>Posts</h1>
-    <% posts.forEach(function(post) { %>
-        <div class="row border">
-          <div class="col-sm-4 img-container">
-            <img src="<%=post.image%>" class="image-home">
-          </div>
-          <div class="col-sm-8 text-container">
-            <h2> <%= post.title %></h2>
-            <p> 
-            <%= (post.body).substring(0,100) + "..." %>
-            <a href="/posts/<%=post.id%>">Read More</a> 
-            </p>
-          </div>
-        </div>
-    <% }) %>
-  </div>
-
   <body>
-    <div class="container">
-        <div class="no-box">
-            <span class="no">1</span>
+    <div class="main container">
+      <h1>Home</h1>
+      
+      <p> <%= startingContent %> </p>
+      <br>
+    
+      <h1>Posts</h1>
+      <div id="posts">
+        <% posts.forEach(function(post) { %>
+          <div class="row border">
+            <div class="col-sm-4 img-container">
+              <img src="<%=post.image%>" class="image-home">
+            </div>
+            <div class="col-sm-8 text-container">
+              <h2> <%= post.title %></h2>
+              <p> 
+              <%= (post.body).substring(0,100) + "..." %>
+              <a href="/posts/<%=post.id%>">Read More</a> 
+              </p>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <button type="button" id = "previous-button" class="btn btn-info">
+              Previous
+            </button>
+          </div>
+    
+          <div class="col-md-6">
+            <button type="button" id = "next-button" class="btn btn-info" style="float: right">
+              Next
+            </button>
+          </div>
         </div>
-
-        <ul class="pager">
-          <li><button class="btn" onclick="prev()">Previous</button></li>
-          <li><button class="btn" onclick="next()">Next</button></li>
-        </ul>
+      </div>  
     </div>
   
+  
     <script>
-        var no_box = document
-            .querySelector('.no-box');
-              
-        var i = 1;
+
+      $(document).ready(function() {
+
+        var start = 0;
+        var limit = 1;
   
-        function prev() {
-  
-            // Start position 
-            if (i == 1) {
-  
-                // Add disabled attribute on
-                // prev button
-                document.getElementsByClassName(
-                        'prev').disabled = true;
-  
-                // Remove disabled attribute 
-                // from next button 
-                document.getElementsByClassName(
-                        'next').disabled = false;
-            } else {
-                i--;
-                return setNo();
+        $("#next-button").click(function(){
+    
+          start = start + limit;
+    
+          $.ajax({
+            url: "/get-posts/" + start + "/" + limit,
+            method: "GET",
+            success: function (response) {
+              renderPosts(response);
             }
-        }
-  
-        function next() {
-  
-            // End position
-            if (i == 5) {
-  
-                // Add disabled attribute on 
-                // next button
-                document.getElementsByClassName(
-                        'next').disabled = true;
-  
-                // Remove disabled attribute
-                // from prev button
-                document.getElementsByClassName(
-                        'prev').disabled = false;
-            } else {
-                i++;
-                return setNo();
+          });
+        });
+
+        $("#previous-button").click(function(){
+    
+          start = start - limit;
+
+          $.ajax({
+            url: "/get-posts/" + start + "/" + limit,
+            method: "GET",
+            success: function (response) {
+              renderPosts(response);
             }
+          });
+        });
+    
+        function renderPosts(posts) {
+          if(posts.length > 0) {
+            var html = "";
+    
+            for (let a = 0; a < posts.length; a++) {
+              html += '<div class="row border">';
+                html += '<div class="col-sm-4 img-container">';
+                  html += '<img src="' + posts[a].image + '" class="image-home">';
+                html += '</div>';
+                html += '<div class="col-sm-8 text-container">';
+                  html += '<h2>'+ posts[a].title +'</h2>';
+                  html += '<p>'; 
+                    html += (posts[a].body).substring(0,100) + '"..."';
+                    html += '<a href="/posts/' + posts[a]._id + '">Read More</a>'; 
+                  html += '</p>';
+                html += '</div>';
+              html += '</div>';    
+            }
+    
+            $("#posts").html(html);
+          }
         }
+      });
+   
   
-        function setNo() {
-  
-            // Change innerhtml
-            return no_box.innerHTML = i;
-        }
     </script>
   </body>
+  
 
   <%- include("partials/footer"); -%>
