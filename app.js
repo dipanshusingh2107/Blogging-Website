@@ -69,7 +69,7 @@ function(accessToken, refreshToken, profile, cb) {
 
 // **** Display home page *****
 app.get("/", function(req, res) {
-  const postlimit = 1;
+  const postlimit = 3;
   Post.find({}).sort({"_id": -1}).limit(postlimit).then((posts)=>{
     res.render("home", 
     {startingContent: homeStartingContent, posts: posts});
@@ -86,7 +86,7 @@ app.get("/get-posts/:start/:limit", function(req, res) {
 
 // **** Display loggedin home page *****
 app.get("/homeloggedin", function(req, res) {
-  const postlimit = 1;
+  const postlimit = 3;
   if(req.isAuthenticated()) {
     Post.find({}).sort({"_id": -1}).limit(postlimit).then((posts)=>{
       res.render("homeloggedin", 
