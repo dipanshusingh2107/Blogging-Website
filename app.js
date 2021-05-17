@@ -69,7 +69,7 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.CLIENT_SECRET,
   //callbackURL: "http://localhost:3000/auth/google/blog",
   callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
-  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo.email"
+  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
 function(accessToken, refreshToken, profile, cb) {
   User.findOrCreate({ googleId: profile.id,email:email}, function (err, user) {
@@ -122,7 +122,7 @@ app.get("/get-postsloggedin/:start/:limit", function(req, res) {
 
 // **** Display google page *****
 app.get("/auth/google",
-  passport.authenticate('google', { scope: ["profile"] })
+  passport.authenticate('google', { scope: ["profile","email"] })
 );
 
 // **** Callback from google *****
