@@ -37,10 +37,18 @@ app.use(session ({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb+srv://visheshabrol:vseh2000bol@cluster0.ve8iy.mongodb.net/sample2DB", 
+
+//write this and comment below to use locally
+// mongoose.connect("mongodb://localhost:27017/sample2DB", 
+// {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.set("useCreateIndex", true);
+
+const URI = process.env.MONGODB_URI;
+mongoose.connect(URI,  
 {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex", true);
 mongoose.set('useFindAndModify', false);
+
 
 
 passport.use(User.createStrategy());
@@ -58,7 +66,8 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  callbackURL: "http://localhost:3000/auth/google/blog",
+  //callbackURL: "http://localhost:3000/auth/google/blog",
+  callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
 function(accessToken, refreshToken, profile, cb) {
@@ -70,7 +79,7 @@ function(accessToken, refreshToken, profile, cb) {
 
 // **** Display home page *****
 app.get("/", function(req, res) {
-  const postlimit = 3;
+  const postlimit = 10;
   Post.find({}).sort({"_id": -1}).limit(postlimit).then((posts)=>{
     res.render("home", 
     {startingContent: homeStartingContent, posts: posts});
@@ -87,7 +96,7 @@ app.get("/get-posts/:start/:limit", function(req, res) {
 
 // **** Display loggedin home page *****
 app.get("/homeloggedin", function(req, res) {
-  const postlimit = 3;
+  const postlimit = 10;
   if(req.isAuthenticated()) {
     Post.find({}).sort({"_id": -1}).limit(postlimit).then((posts)=>{
       res.render("homeloggedin", 
@@ -270,6 +279,11 @@ app.post('/login',
   });
 
 
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, function() {
+  console.log("Server started on port ${PORT}");
+
 let port = process.env.PORT;
   if (port == null || port == "") {
     port = 3000;
@@ -277,4 +291,5 @@ let port = process.env.PORT;
 
 app.listen(port, function() {
   console.log("Server has started Successfully");
+
 });
