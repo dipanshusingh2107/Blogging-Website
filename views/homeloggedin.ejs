@@ -67,9 +67,12 @@
           start = start + limit;
     
           $.ajax({
-            url: "/get-posts/" + start + "/" + limit,
+            url: "/get-postsloggedin/" + start + "/" + limit,
             method: "GET",
             success: function (response) {
+              if(response.length == 0) {
+                start = start-limit;
+              }
               renderPosts(response);
             }
           });
@@ -77,7 +80,7 @@
 
         $("#previous-button").click(function(){
     
-          start = start - limit;
+          start = Math.max(0,start-limit);
 
           $.ajax({
             url: "/get-postsloggedin/" + start + "/" + limit,
