@@ -15,6 +15,7 @@ const ObjectId = require('mongodb').ObjectID;
 const User = require("./models/User");
 const Post = require("./models/Post");
 const { toArray } = require('lodash');
+const Comment = require("./models/Comment");
 
 
 const homeStartingContent ="This platform is for all the bloggers out there to post day to day news related stuff, articles etc.";
@@ -38,14 +39,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //write this and comment below to use locally
-// mongoose.connect("mongodb://localhost:27017/sample2DB", 
-// {useNewUrlParser: true, useUnifiedTopology: true});
-// mongoose.set("useCreateIndex", true);
-
-const URI = process.env.MONGODB_URI;
-mongoose.connect(URI, 
+mongoose.connect("mongodb://localhost:27017/sample2DB", 
 {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex", true);
+
+// const URI = process.env.MONGODB_URI;
+// mongoose.connect(URI, 
+// {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.set("useCreateIndex", true);
 
 
 
@@ -153,19 +154,27 @@ app.get("/posts/:anything", function(req, res) {
   const requestedPostID = req.params.anything;
 
   Post.findOne({_id: new ObjectId(requestedPostID)}).then((post)=>{
-    if (req.isAuthenticated())  {
-      res.render("loggedinpost", 
-      {title: post.title, image: post.image, content: post.body, 
-      comments: post.comments, id: requestedPostID});  
-    } else  {
+    Comment.find({postID: new ObjectId(requestedPostID)}).then((comm)=>{
+      console.log(comm);
+      if (req.isAuthenticated())  
+      {
+        res.render("loggedinpost", 
+        {title: post.title, image: post.image, content: post.body, 
+        comments: comm, id: requestedPostID});  
+      } 
+      else  
+      {
         res.render("post", 
         {title: post.title, image: post.image, content: post.body, 
-        comments: post.comments, id: requestedPostID});
+        comments: comm, id: requestedPostID});
       }
-  });
+    });
+
+    });
+    
 });
 
-// **** Display particular user posts *****
+// **** Display user posts *****
 app.get("/myposts", function(req, res) {
   
   if (req.isAuthenticated()) {
@@ -209,31 +218,58 @@ app.post("/compose", function(req, res) {
 
 // ******* Posting Comments ************
 app.post("/posts/:anything", function(req, res) {
-  const singlecomment = {
-    postedcomment : req.body.postComment
-  };
+  // const singlecomment = {
+  //   postedcomment : req.body.postComment
+  // };
 
   const requestedID = req.params.anything;
 
-  let oldcomments = [];
+  if (req.isAuthenticated())  
+  {
+    const comm = new Comment({
+    userID : req.user._id,
+    postID : requestedID,
+    postedcomment : req.body.postComment
+    });
 
-  Post.findOne({_id: new ObjectId(requestedID)}).then((post)=>{
-    oldcomments = [...post.comments];
-    let newcomments=[];
-  
-    for(let i=0;i<oldcomments.length;i++) {
-      let x = {postedcomment:oldcomments[i].postedcomment};
-      newcomments.push(x);
+    comm.save((err,data)=>{
+    if(err)
+    {
+      console.log(err);
+      res.send('Post not saved');
+      return err;
     }
-  
-    if (req.isAuthenticated())  {
-      newcomments.push(singlecomment);
-      Post.findOneAndUpdate({_id:requestedID} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
+    else
+    {
       res.redirect("/posts/"+requestedID); 
-    }  else  {
-        res.redirect("/login");
-      }
-  });
+    }
+    });
+  }
+  else
+  {
+    res.redirect("/login");
+  }
+
+
+  // let oldcomments = [];
+
+  // Post.findOne({_id: new ObjectId(requestedID)}).then((post)=>{
+  //   oldcomments = [...post.comments];
+  //   let newcomments=[];
+  
+  //   for(let i=0;i<oldcomments.length;i++) {
+  //     let x = {postedcomment:oldcomments[i].postedcomment};
+  //     newcomments.push(x);
+  //   }
+  
+  //   if (req.isAuthenticated())  {
+  //     newcomments.push(singlecomment);
+  //     Post.findOneAndUpdate({_id:requestedID} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
+  //     res.redirect("/posts/"+requestedID); 
+  //   }  else  {
+  //       res.redirect("/login");
+  //     }
+  // });
 });
 
 
@@ -243,11 +279,20 @@ app.post("/deletepost/:anything",(req,res)=>{
 
   if(req.isAuthenticated()) {
     Post.deleteOne({_id:requestedPostID},(err)=>{
-      if(err) {
+      if(err) 
+      {
         console.log(err);
-      } else {
-        res.redirect("/myposts");
+      } 
+      else 
+      {
+        Comment.deleteMany({postID:requestedPostID},(error)=>{
+          if(error)
+          console.log(error);
+          else
+          res.redirect("/myposts");
+        }); 
       }
+
     });
   }
   else res.redirect("/login");
@@ -279,5 +324,5 @@ app.post('/login',
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function() {
-  console.log("Server started on port ${PORT}");
+  console.log(`Server is listing at ${PORT}`);
 });
