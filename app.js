@@ -69,10 +69,10 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.CLIENT_SECRET,
   //callbackURL: "http://localhost:3000/auth/google/blog",
   callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
-  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo.email"
 },
 function(accessToken, refreshToken, profile, cb) {
-  User.findOrCreate({ googleId: profile.id}, function (err, user) {
+  User.findOrCreate({ googleId: profile.id,email:email}, function (err, user) {
     return cb(err, user);
   });
 }
