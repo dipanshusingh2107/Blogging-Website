@@ -39,11 +39,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-//write this and comment below to use locally
+//write this and comment below to use locally and not in production
 // mongoose.connect("mongodb://localhost:27017/sample2DB", 
 // {useNewUrlParser: true, useUnifiedTopology: true});
 // mongoose.set("useCreateIndex", true);
-// mongoose.set('useFindAndModify', false);
+// mongoose.set('useFindAndModify', false); 
 
 const URI = process.env.MONGODB_URI;
 mongoose.connect(URI, 
