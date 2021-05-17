@@ -63,8 +63,8 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  //callbackURL: "http://localhost:3000/auth/google/blog",
-  callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
+  callbackURL: "http://localhost:3000/auth/google/blog",
+  //callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
 function(accessToken, refreshToken, profile, cb) {
@@ -276,6 +276,7 @@ app.post('/login',
   });
 
 
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, function() {
+  console.log("Server started on port ${PORT}");
 });
