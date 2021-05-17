@@ -64,8 +64,14 @@
             url: "/get-posts/" + start + "/" + limit,
             method: "GET",
             success: function (response) {
+
               if(response.length == 0)
               start = start - limit;
+
+              if(response.length == 0) {
+                start = start-limit;
+              }
+
               renderPosts(response);
             }
           });
@@ -73,7 +79,11 @@
 
         $("#previous-button").click(function(){
     
+
           start = Math.max(0,start - limit);
+
+          start = Math.max(0,start-limit);
+
 
           $.ajax({
             url: "/get-posts/" + start + "/" + limit,

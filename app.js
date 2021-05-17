@@ -37,15 +37,17 @@ app.use(session ({
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 //write this and comment below to use locally
 // mongoose.connect("mongodb://localhost:27017/sample2DB", 
 // {useNewUrlParser: true, useUnifiedTopology: true});
 // mongoose.set("useCreateIndex", true);
 
 const URI = process.env.MONGODB_URI;
-mongoose.connect(URI, 
+mongoose.connect(URI,  
 {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex", true);
+mongoose.set('useFindAndModify', false);
 
 
 
@@ -170,7 +172,7 @@ app.get("/myposts", function(req, res) {
   
   if (req.isAuthenticated()) {
     const requestedUserID = req.user._id.valueOf();
-    Post.find({user: requestedUserID}).then((posts)=>{
+    Post.find({user: requestedUserID}).sort({"_id": -1}).then((posts)=>{
       res.render("myposts", {posts: posts});
     });
   } else {
@@ -277,7 +279,17 @@ app.post('/login',
   });
 
 
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function() {
   console.log("Server started on port ${PORT}");
+
+let port = process.env.PORT;
+  if (port == null || port == "") {
+    port = 3000;
+  }
+
+app.listen(port, function() {
+  console.log("Server has started Successfully");
+
 });
