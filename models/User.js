@@ -5,7 +5,12 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const userSchema = new mongoose.Schema ({
     name: String,
     email: {type:String , unique:true,sparse: true},
-    username: {type:String , unique:true,sparse: true},
+    username: {type:String , 
+      index: {
+        unique: true,
+        partialFilterExpression: {email: {$type: 'string'}}
+      }
+      },
     password: String,
     googleId: String
   });
