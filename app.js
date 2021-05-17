@@ -37,9 +37,15 @@ app.use(session ({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/sample2DB", 
+// mongoose.connect("mongodb://localhost:27017/sample2DB", 
+// {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.set("useCreateIndex", true);
+
+const URI = process.env.MONGODB_URI;
+mongoose.connect(URI, 
 {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex", true);
+
 
 
 passport.use(User.createStrategy());
