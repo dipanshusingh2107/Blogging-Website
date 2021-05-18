@@ -13,9 +13,9 @@ const Post = mongoose.model('post',{
     body:{
         type: String
     },
-    comments:{ 
-        type: [{postedcomment : String}]  
-    },
+    // comments:{ 
+    //     type: [{postedcomment : String}]  //NOT NEEDED
+    // },
     user:{
         type:String
     }

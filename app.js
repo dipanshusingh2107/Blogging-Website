@@ -67,12 +67,12 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  //callbackURL: "http://localhost:3000/auth/google/blog",
-  callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
+  callbackURL: "http://localhost:3000/auth/google/blog",
+  //callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
 function(accessToken, refreshToken, profile, cb) {
-  console.log(profile.email);
+  //console.log(profile.email);
   User.findOrCreate({ googleId: profile.id, email:profile.emails[0].value}, function (err, user) {
     return cb(err, user);
   });
