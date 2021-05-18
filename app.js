@@ -39,17 +39,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-//write this and comment below to use locally and not in production
-// mongoose.connect("mongodb://localhost:27017/sample2DB", 
-// {useNewUrlParser: true, useUnifiedTopology: true});
-// mongoose.set("useCreateIndex", true);
-// mongoose.set('useFindAndModify', false); 
-
 const URI = process.env.MONGODB_URI;
-mongoose.connect(URI, 
+mongoose.connect(URI,
 {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex", true);
-
 
 
 passport.use(User.createStrategy());
@@ -68,7 +61,7 @@ passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   //callbackURL: "http://localhost:3000/auth/google/blog",
-  callbackURL: "https://dailyjournaldbms.herokuapp.com/auth/google/blog",
+  callbackURL: "https://dailyjournalblogging.herokuapp.com/auth/google/blog",
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
 function(accessToken, refreshToken, profile, cb) {
