@@ -54,7 +54,7 @@
       $(document).ready(function() {
 
         var start = 0;
-        var limit = 3;
+        var limit = 5;
   
         $("#next-button").click(function(){
     
@@ -90,7 +90,7 @@
           if(posts.length > 0) {
             var html = "";
     
-            for (let a = 0; a < posts.length; a++) {
+            for (let a = 0; a < Math.min(limit,posts.length); a++) {
               html += '<div class="row border">';
                 html += '<div class="col-sm-4 img-container">';
                   html += '<img src="' + posts[a].image + '" class="image-home">';
